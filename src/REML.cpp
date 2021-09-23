@@ -400,7 +400,7 @@ VectorXd reml_iteration(Eigen::VectorXd start, eigenMatrix &X,eigenVector &y, ve
 		}
 
 
-		cout << lgL << endl;
+		// cout << lgL << endl;
 		dlogL = lgL - prev_lgL;
 
 		//converge
