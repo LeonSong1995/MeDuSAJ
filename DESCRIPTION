@@ -1,0 +1,26 @@
+Package: MLM
+Type: Package
+Title: Estimate Cell-type Proportions of Bulk RNA-Seq Data with Linear Mixed Model
+Version: 0.1.0
+Author: LiyangSong
+Maintainer: LiyangSong <songliyang@westlake.edu.cn>
+Description: Package implementing the mixed linear model (MLM) to estimate cell-type proportions in 
+		bulk gene expression data.It is based on reference gene expression from single-cell RNA-Seq data. 
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+biocViews: limma, Seurat
+Depends: 
+    Rcpp (>= 1.0.3),
+    parallel,
+    nnls,
+    doParallel,
+    RcppEigen,
+    R (>= 2.10)
+Imports: Rcpp (>= 1.0.3),sva,nnls,doParallel,RcppEigen,parallel, doSNOW, raster, limma,Seurat
+LinkingTo: Rcpp,RcppEigen
+RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
