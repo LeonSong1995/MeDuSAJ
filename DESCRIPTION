@@ -17,7 +17,7 @@ Depends:
     doParallel,
     RcppEigen,
     R (>= 2.10)
-Imports: Rcpp (>= 1.0.3),sva,nnls,doParallel,RcppEigen,parallel, doSNOW, raster, limma,Seurat
+Imports: Rcpp (>= 1.0.3),sva,nnls,doParallel,RcppEigen,parallel, doSNOW
 LinkingTo: Rcpp,RcppEigen
 RoxygenNote: 7.1.1
 Suggests: 
