@@ -180,7 +180,7 @@ RunReml = function(sid,base, bulk, rancmp, MetaData, RanSplit, iter_max, bk_name
     }else{
       Z = list(rancmp[[id]])
     }
-	start = rep(var(y)/(length(Z)+1),(length(Z)+1))
+	start = c(rep(1e-5,length(Z)),1e-2)
     mlmfit = reml(start,X = fixcmp,y = y,Z = Z,maxiter = iter_max)
 	b = mlmfit[[1]]
 	p = 1-pchisq((b*b)/diag(mlmfit[[2]]),df=1)
