@@ -29,7 +29,7 @@ mk_gene = sapply(unique(mk$cluster), function(clu){
 })
 mk_gene = unique(c(mk_gene))
 
-### run MeDuSAJ
+### Run MeDuSAJ
 ct.es = CTdcv(bulk = bulk,ncpu = 2,sce = sce_use,data_type = 'count',gene = mk_gene)
 
 ### Run MeDuSAJ with quick mode (fitting REML only once for each bulk sample).
