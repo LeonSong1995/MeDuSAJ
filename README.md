@@ -19,7 +19,8 @@ sce_use$sampleID # sample Id for each cell.
 
 ## Find marker genes
 Idents(sce_use) = sce_use$cellType
-mk = FindAllMarkers(sce_merge,only.pos = T,verbose = T,min.pct = 0.1) # you can use the FindAllMarkers functions in Seurat to find marker genes for each cell state (cell type). 
+### You can use the FindAllMarkers functions in Seurat to find marker genes for each cell state (cell type). 
+mk = FindAllMarkers(sce_merge,only.pos = T,verbose = T,min.pct = 0.1) 
 mk$cluster = as.vector(mk$cluster)
 
 mk_gene = sapply(unique(mk$cluster), function(clu){
@@ -30,4 +31,7 @@ mk_gene = unique(c(mk_gene))
 
 ### run MeDuSAJ
 ct.es = CTdcv(bulk = bulk,ncpu = 2,sce = sce_use,data_type = 'count',gene = mk_gene)
+
+### Run MeDuSAJ with quick mode (fitting REML only once for each bulk sample).
+ct.es = CTdcv_quick(bulk = bulk,ncpu = 2,sce = sce_use,data_type = 'count',gene = mk_gene)
 ```
