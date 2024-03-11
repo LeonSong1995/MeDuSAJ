@@ -20,7 +20,7 @@ sce_use$sampleID # sample Id for each cell.
 ## Find marker genes
 Idents(sce_use) = sce_use$cellType
 ### You can use the FindAllMarkers functions in Seurat to find marker genes for each cell state (cell type). 
-mk = FindAllMarkers(sce_merge,only.pos = T,verbose = T,min.pct = 0.1) 
+mk = FindAllMarkers(sce_use,only.pos = T,verbose = T,min.pct = 0.1) 
 mk$cluster = as.vector(mk$cluster)
 
 mk_gene = sapply(unique(mk$cluster), function(clu){
