@@ -42,8 +42,4 @@ mk_gene = unique(c(mk_gene))
 
 ### Run MeDuSAJ
 ct.es = CTdcv(bulk = example.bulk,ncpu = 2,sce = example.sce,data_type = 'count',gene = mk_gene)
-
-
-### Run MeDuSAJ with quick mode (fitting REML only once for each bulk sample).
-ct.es = CTdcv_quick(bulk = example.bulk,ncpu = 2,sce = example.sce,data_type = 'count',gene = mk_gene)
 ```
