@@ -14,6 +14,7 @@ in R:
 install.packages('YourPath/MeDuSAJ',type='source',repos=NULL)
 ```
 
+## How to use
 ```R
 ## Load the example data
 load('YourPath/MeDuSAJ/data/example.sce.rda')
