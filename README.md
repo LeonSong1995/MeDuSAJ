@@ -13,12 +13,13 @@ devtools::install_github("LeonSong1995/MeDuSAJ", build_vignettes=F)
 library(MLM) # This is the MeDuSAJ package
 
 ## Estimate cell state (type) abundance
+## You can bin your continuous cell trajectory into an uneven discrete cell state. 
 ### required annotation:
-sce_use$cellType # your label of cell types or cell states for each cell.
+sce_use$cellLabel # your label of cell types or cell states for each cell.
 sce_use$sampleID # sample Id for each cell.
 
 ## Find marker genes
-Idents(sce_use) = sce_use$cellType
+Idents(sce_use) = sce_use$cellLabel
 ### You can use the FindAllMarkers functions in Seurat to find marker genes for each cell state (cell type). 
 mk = FindAllMarkers(sce_use,only.pos = T,verbose = T,min.pct = 0.1) 
 mk$cluster = as.vector(mk$cluster)
