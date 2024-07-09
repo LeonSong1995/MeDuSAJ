@@ -10,7 +10,7 @@ basis = function(exprsData,MetaData,bulk,ct.cell.size,data_type, Filter, BatchCo
 
 	cell_name = colnames(exprsData)
 	countmat = exprsData
-	ct.id = MetaData[cell_name,]$cellType
+	ct.id = MetaData[cell_name,]$cellLabel
 	sample.id = MetaData[cell_name,]$sampleID
 	ct_sample.id = paste(ct.id,sample.id, sep = '%')
 
@@ -61,7 +61,7 @@ basis = function(exprsData,MetaData,bulk,ct.cell.size,data_type, Filter, BatchCo
 	# rownames(base) = gene
 	
 	# Adding an extremely small positive number (1e-200) to avoid infinity.
-	data_cellType = sapply(unique(ct.id), function(id){
+	data_cellLabel = sapply(unique(ct.id), function(id){
 		y = countmat[, ct.id %in% id]
 		y = sweep(y,2,colSums(y)+1e-200,'/')*SF
 		if (Filter==TRUE){
@@ -70,12 +70,6 @@ basis = function(exprsData,MetaData,bulk,ct.cell.size,data_type, Filter, BatchCo
 		return(y[gene, ])
 	 })
 	
-	# data_cellType = sapply(GeneIM,function(ct){
-		# A = cellFilter(ct)
-		# rownames(A) = gene
-		# return(A)
-	# })
-
 	if(is.null(ncol(bulk))){
 		bulk = ((bulk/(sum(bulk)+1e-200))*SF)[gene]
 		if(BatchCorrect==TRUE){warning('Sample Size too samll (<20 samples), cannot remove BatchEffect!')}
@@ -95,7 +89,7 @@ basis = function(exprsData,MetaData,bulk,ct.cell.size,data_type, Filter, BatchCo
 
 
 	return(list(base = base[gene,],
-				data_cellType = data_cellType,
+				data_cellLabel = data_cellLabel,
 				bulk = bulk,
 				cellSize = sum.mat))
 }
