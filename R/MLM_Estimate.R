@@ -31,7 +31,7 @@
 #'
 CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, ct.cell.size = NULL,BatchCorrect=F,Filter=T,SF=1e+3,ncpu=NULL,iter_max=1000){
 
-	print("Thanks for using MLM to perform bulk deconvolution analysis.")
+	print("Thanks for using MeDuSAJ to perform bulk deconvolution analysis.")
 
 	#Checking the correct format of the reference single-cell data input
 	if (!(data_type %in% c('count','tpm','rpkm','cpm','fpkm'))){
@@ -52,11 +52,11 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 		stop('Please input cellLabel, check your MetaData: Seurat_Obj@meta.data.')
 	}
 	if(length(unique(sce$cellLabel))==1){
-		stop('MLM can not work with only one cell type inputted.')
+		stop('MeDuSAJ can not work with only one cell type inputted.')
 	}
 	if(!is.null(select.ct)){
 		if(is.na(table(sce$cellLabel %in% select.ct)['TRUE'])){
-			stop('No cell types selected. Please check the select.ct!')
+			stop('No cells selected. Please check the select.ct!')
 		}else{
 			sce = sce
 		}
@@ -117,11 +117,11 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 	bk_name = colnames(bulk)
 
 
-	#Run cell-type level deconvolution parallelly
+	#Run deconvolution parallelly
 	if(is.null(ncpu)){
 		ncpu = max(1, parallel::detectCores() - 1)
 	}
-	print(paste(paste("Running cell-type level deconvolution with",ncpu,sep=" "),'cores.',sep=" "))
+	print(paste(paste("Running cellualr deconvolution analysis with",ncpu,sep=" "),'cores.',sep=" "))
 	cl = parallel::makeCluster(ncpu)
 	parallel::clusterExport(cl=cl, varlist=c("RunReml", "base", "bulk","rancmp","MetaData","RanSplit","iter_max", "bk_name","reml"),
 			  envir=environment())
@@ -190,144 +190,5 @@ RunReml = function(sid,base, bulk, rancmp, MetaData, RanSplit, iter_max, bk_name
   })
 
   colnames(result) = colnames(x)
-  return(result)
-}
-
-
-CTdcv_quick = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, ct.cell.size = NULL,BatchCorrect=F,Filter=T,SF=1e+3,ncpu=NULL,iter_max=1000){
-  
-  print("Thanks for using MLM to perform bulk deconvolution analysis.")
-  
-  #Checking the correct format of the reference single-cell data input
-  if (!(data_type %in% c('count','tpm','rpkm','cpm','fpkm'))){
-    stop('Please input correct data_type: count/tpm/rpkm/cpm/fpkm.')
-  }
-  if(!("Seurat" %in% class(sce))){
-    stop('Please input Seurat Object.')
-  }
-  if(!is.null(RanSplit)){
-    if (is.na(match(RanSplit,colnames(sce@meta.data)))){
-      stop('Do not know how to split randomp components, please check your MetaData: Seurat_Obj@meta.data.')
-    }
-  }
-  if(!'sampleID' %in% colnames(sce@meta.data)){
-    stop('Please input sampleID, check your MetaData: Seurat_Obj@meta.data.')
-  }
-  if(!'cellType' %in% colnames(sce@meta.data)){
-    stop('Please input cellType, check your MetaData: Seurat_Obj@meta.data.')
-  }
-  if(length(unique(sce$cellType))==1){
-    stop('MLM can not work with only one cell type inputted.')
-  }
-  if(!is.null(select.ct)){
-    if(is.na(table(sce$cellType %in% select.ct)['TRUE'])){
-      stop('No cell types selected. Please check the select.ct!')
-    }else{
-      sce = sce
-    }
-  }else{
-    select.ct = unique(sce$cellType)
-  }
-  
-  MetaData = sce@meta.data
-  exprsData = as.matrix(sce@assays$RNA@counts)
-  bulk = bulk[rowSums(bulk)>0,]
-  
-  
-  #Checking the signature genes input
-  commonGene = intersect(rownames(exprsData),rownames(bulk))
-  gene = intersect(commonGene,gene)
-  if(length(gene)<10){
-    stop('Too few signature genes (signature genes < 10).')
-  }
-  
-  bulk = as.matrix(bulk)[commonGene,]
-  exprsData = exprsData[commonGene,]
-  
-  
-  MetaData$cellType = as.vector(MetaData$cellType)
-  MetaData$sampleID = as.vector(MetaData$sampleID)
-  
-  #Preparing for the basic running information (fixed/random components, cell size...)
-  print("Data preparing.")
-  Info = basis(bulk = bulk, exprsData = exprsData, MetaData=MetaData, ct.cell.size = ct.cell.size,
-               data_type=data_type,gene=gene,BatchCorrect = BatchCorrect,Filter=Filter,SF=SF)
-  
-  
-  base = Info$base[,select.ct]
-  bulk = Info$bulk
-  data_cellType = Info$data_cellType
-  cellSize = Info$cellSize
-  type_n = length(data_cellType)
-  
-  
-  #Preparing for the random components
-  rancmp = as.matrix(do.call(cbind,data_cellType))
-  
-  ct_name = colnames(base)
-  bk_name = colnames(bulk)
-  
-  
-  #Run cell-type level deconvolution parallelly
-  if(is.null(ncpu)){
-    ncpu = max(1, parallel::detectCores() - 1)
-  }
-  print(paste(paste("Running cell-type level deconvolution with",ncpu,sep=" "),'cores.',sep=" "))
-  cl = parallel::makeCluster(ncpu)
-  parallel::clusterExport(cl=cl, varlist=c("RunReml_quick", "base", "bulk","rancmp","MetaData","RanSplit","iter_max", "bk_name","reml"),
-                          envir=environment())
-  doSNOW::registerDoSNOW(cl)
-  pb = utils::txtProgressBar(min = 1, max = ncol(bulk), style = 3)
-  progress = function(n) setTxtProgressBar(pb, n)
-  opts = list(progress = progress)
-  `%dopar2%` = foreach::`%dopar%`
-  runNumber = NULL
-  estimate = foreach::foreach(runNumber = 1:ncol(bulk), .options.snow = opts) %dopar2% {
-    
-    r = RunReml_quick(runNumber,base=base,bulk=bulk,rancmp=rancmp,MetaData=MetaData, RanSplit=RanSplit, iter_max,bk_name)
-    b = r['b',]
-    p = r['p',]
-    setTxtProgressBar(pb, runNumber)
-    cbind(b,p)
-  }
-  parallel::stopCluster(cl)
-  close(pb)
-  b = t(sapply(1:length(estimate), function(o){estimate[[o]][,1]}))
-  p = t(sapply(1:length(estimate), function(o){estimate[[o]][,2]}))
-  
-  colnames(b) = colnames(p) = ct_name
-  rownames(b) = rownames(p) = bk_name
-  
-  
-  #Adjusting for the cell size when count matrix inputted
-  # if(data_type=='count'){
-  # 	b = sweep(b,2,cellSize[colnames(b)],'/')
-  # 	b = sweep(b,1,rowSums(b),'/')
-  # }else{
-  # 	warning("The estimated cell type proportions are not comparable among different cell types!")
-  # }
-  
-  # #Adjusting the negative value
-  # if(min(b)<0){b = b + abs(min(b))}
-  
-  return(list('ct.pro'=b,'ct.pro.p'=p,'cellSize'= cellSize))
-}
-
-
-#' @keywords internal
-RunReml_quick = function(sid,base, bulk, rancmp, MetaData, RanSplit, iter_max, bk_name){
-  y = bulk[,sid]
-  type_n = ncol(base)
-  fixcmp = as.matrix(rep(1,length(y)))
-  start = c(1e-10,0.1)
-  mlmfit = reml(start,X = fixcmp,y = y,Z = list(rancmp),maxiter = iter_max)
-  vi = mlmfit[[4]]
-  b = apply(base,2,function(x){
-    solve(t(x) %*% vi %*% x) %*% (t(x) %*% vi %*% y)
-  })
-  
-  p = sapply(b,function(i){1-pchisq((i*i)/diag(mlmfit[[2]]),df=1)})
-  result = rbind(b,p)
-  colnames(result) = colnames(base)
   return(result)
 }
