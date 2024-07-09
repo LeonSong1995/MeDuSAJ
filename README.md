@@ -17,8 +17,8 @@ install.packages('YourPath/MeDuSAJ',type='source',repos=NULL)
 ## How to use
 ```R
 ## Load the example data
-load('YourPath/MeDuSAJ/data/example.sce.rda')
-load('YourPath/MeDuSAJ/data/example.bulk.rda')
+example.sce = MeDuSAJ::example.sce
+example.bulk = MeDuSAJ::example.bulk
 
 ## Estimate cell state (type) abundance
 ## You can bin your continuous cell trajectory into an uneven discrete cell state. 
