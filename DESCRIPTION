@@ -1,4 +1,4 @@
-Package: MLM
+Package: MeDuSAJ
 Type: Package
 Title: Estimate Cell-type Proportions of Bulk RNA-Seq Data with Linear Mixed Model
 Version: 0.1.0

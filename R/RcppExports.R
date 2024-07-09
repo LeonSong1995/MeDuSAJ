@@ -2,14 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 ecor <- function(mat) {
-    .Call(`_MLM_ecor`, mat)
+    .Call(`_MeDuSAJ_ecor`, mat)
 }
 
 reml <- function(start, X, y, Z, maxiter) {
-    .Call(`_MLM_reml`, start, X, y, Z, maxiter)
+    .Call(`_MeDuSAJ_reml`, start, X, y, Z, maxiter)
 }
 
 reml2 <- function(start, X, y, Z, maxiter) {
-    .Call(`_MLM_reml2`, start, X, y, Z, maxiter)
+    .Call(`_MeDuSAJ_reml2`, start, X, y, Z, maxiter)
 }
 

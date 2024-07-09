@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // ecor
 Eigen::MatrixXd ecor(Eigen::MatrixXd mat);
-RcppExport SEXP _MLM_ecor(SEXP matSEXP) {
+RcppExport SEXP _MeDuSAJ_ecor(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // reml
 std::vector<Eigen::MatrixXd> reml(Eigen::VectorXd start, Eigen::MatrixXd& X, Eigen::VectorXd& y, std::vector<Eigen::MatrixXd>& Z, int maxiter);
-RcppExport SEXP _MLM_reml(SEXP startSEXP, SEXP XSEXP, SEXP ySEXP, SEXP ZSEXP, SEXP maxiterSEXP) {
+RcppExport SEXP _MeDuSAJ_reml(SEXP startSEXP, SEXP XSEXP, SEXP ySEXP, SEXP ZSEXP, SEXP maxiterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,7 +39,7 @@ END_RCPP
 }
 // reml2
 std::vector<Eigen::MatrixXd> reml2(Eigen::VectorXd start, Eigen::MatrixXd& X, Eigen::VectorXd& y, std::vector<Eigen::MatrixXd>& Z, int maxiter);
-RcppExport SEXP _MLM_reml2(SEXP startSEXP, SEXP XSEXP, SEXP ySEXP, SEXP ZSEXP, SEXP maxiterSEXP) {
+RcppExport SEXP _MeDuSAJ_reml2(SEXP startSEXP, SEXP XSEXP, SEXP ySEXP, SEXP ZSEXP, SEXP maxiterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -54,13 +54,13 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MLM_ecor", (DL_FUNC) &_MLM_ecor, 1},
-    {"_MLM_reml", (DL_FUNC) &_MLM_reml, 5},
-    {"_MLM_reml2", (DL_FUNC) &_MLM_reml2, 5},
+    {"_MeDuSAJ_ecor", (DL_FUNC) &_MeDuSAJ_ecor, 1},
+    {"_MeDuSAJ_reml", (DL_FUNC) &_MeDuSAJ_reml, 5},
+    {"_MeDuSAJ_reml2", (DL_FUNC) &_MeDuSAJ_reml2, 5},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_MLM(DllInfo *dll) {
+RcppExport void R_init_MeDuSAJ(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
