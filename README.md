@@ -3,29 +3,33 @@ MeDuSAJ supports cell-state deconvolution for annotated `cell states (cell types
 
 
 ## Installation
+in shell command:
+```shell
+git clone https://github.com/LeonSong1995/MeDuSAJ.git
+cd MeDuSAJ
+R CMD install `pwd`
+```
+in R:
 ```R
-install.packages("devtools")
+install.packages('YourPath/MeDuSAJ',type='source',repos=NULL)
+```
 
-##Please install the "Seurat" first. (https://satijalab.org/seurat/)
-install.packages("Seurat")
-library(Seurat)
-
-##R version need > 3.5.0
-devtools::install_github("LeonSong1995/MeDuSAJ", build_vignettes=F)
-library(MLM) # This is the MeDuSAJ package
-
+```R
+## Load the example data
+load('YourPath/MeDuSAJ/data/example.sce.rda')
+load('YourPath/MeDuSAJ/data/example.bulk.rda')
 
 ## Estimate cell state (type) abundance
 ## You can bin your continuous cell trajectory into an uneven discrete cell state. 
 ### required annotation:
-sce_use$cellLabel # your label of cell types or cell states for each cell.
-sce_use$sampleID # sample Id for each cell.
+example.sce$cellLabel # your label of cell types or cell states for each cell.
+example.sce$sampleID # sample Id for each cell.
 
 
 ## Find marker genes
-Idents(sce_use) = sce_use$cellLabel
+Idents(example.sce) = example.sce$cellLabel
 ### You can use the FindAllMarkers functions in Seurat to find marker genes for each cell state (cell type). 
-mk = FindAllMarkers(sce_use,only.pos = T,verbose = T,min.pct = 0.1) 
+mk = FindAllMarkers(example.sce,only.pos = T,verbose = T,min.pct = 0.1) 
 mk$cluster = as.vector(mk$cluster)
 
 mk_gene = sapply(unique(mk$cluster), function(clu){
@@ -36,9 +40,9 @@ mk_gene = unique(c(mk_gene))
 
 
 ### Run MeDuSAJ
-ct.es = CTdcv(bulk = bulk,ncpu = 2,sce = sce_use,data_type = 'count',gene = mk_gene)
+ct.es = CTdcv(bulk = example.bulk,ncpu = 2,sce = example.sce,data_type = 'count',gene = mk_gene)
 
 
 ### Run MeDuSAJ with quick mode (fitting REML only once for each bulk sample).
-ct.es = CTdcv_quick(bulk = bulk,ncpu = 2,sce = sce_use,data_type = 'count',gene = mk_gene)
+ct.es = CTdcv_quick(bulk = example.bulk,ncpu = 2,sce = example.sce,data_type = 'count',gene = mk_gene)
 ```
