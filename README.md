@@ -1,4 +1,6 @@
 # MeDuSAJ
+MeDuSAJ supports cell-state deconvolution for annotated `cell states (cell types)`. MeDuSAJ is more robust for estimating cell state (cell type) abundance for rare cells, albeit with a slightly increased computational burden. 
+
 
 ## Installation
 ```R
