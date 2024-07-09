@@ -6,7 +6,7 @@
 #' Cell-type level deconvolution
 #'
 #' @param bulk A matrix containing bulk RNA-Seq data. Each row corresponds to a certain gene and each column to a certain sample.
-#' @param sce A 'Seurat' object containing the single-cell RNA-Seq data. Meta data of the 'Seurat' object must includes 'cellType' and 'sampleID'.
+#' @param sce A 'Seurat' object containing the single-cell RNA-Seq data. Meta data of the 'Seurat' object must includes 'cellLabel' and 'sampleID'.
 #' @param gene A character vector of the gene names to use as signature for the deconvolution. We summarized signature genes for the 64 human cell-types. please see 'sg'.
 #' @param data_type A character of the type of the single-cell RNA-Seq data, including 'count', 'tpm', 'rpkm','fpkm', and 'cpm'.
 #' @param select.ct A character vector of the names of the target cell-types. The default value is NULL. With default value, all cell-types in the single-cell data will be used.
@@ -48,20 +48,20 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 	if(!'sampleID' %in% colnames(sce@meta.data)){
 		stop('Please input sampleID, check your MetaData: Seurat_Obj@meta.data.')
 	}
-	if(!'cellType' %in% colnames(sce@meta.data)){
-		stop('Please input cellType, check your MetaData: Seurat_Obj@meta.data.')
+	if(!'cellLabel' %in% colnames(sce@meta.data)){
+		stop('Please input cellLabel, check your MetaData: Seurat_Obj@meta.data.')
 	}
-	if(length(unique(sce$cellType))==1){
+	if(length(unique(sce$cellLabel))==1){
 		stop('MLM can not work with only one cell type inputted.')
 	}
 	if(!is.null(select.ct)){
-		if(is.na(table(sce$cellType %in% select.ct)['TRUE'])){
+		if(is.na(table(sce$cellLabel %in% select.ct)['TRUE'])){
 			stop('No cell types selected. Please check the select.ct!')
 		}else{
 			sce = sce
 		}
 	}else{
-		select.ct = unique(sce$cellType)
+		select.ct = unique(sce$cellLabel)
 	}
 
 	MetaData = sce@meta.data
@@ -71,7 +71,7 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 	#finding signature gene
 	if(is.null(gene)){
 		print('Finding signature genes with "FindMarkers".')
-		gene = SignatureGenerator(sce[,sce$cellType %in% select.ct])
+		gene = SignatureGenerator(sce[,sce$cellLabel %in% select.ct])
 		print(length(gene))
 	}
 
@@ -86,7 +86,7 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 	exprsData = exprsData[commonGene,]
 
 
-	MetaData$cellType = as.vector(MetaData$cellType)
+	MetaData$cellLabel = as.vector(MetaData$cellLabel)
 	MetaData$sampleID = as.vector(MetaData$sampleID)
 
 	#Preparing for the basic running information (fixed/random components, cell size...)
@@ -97,14 +97,14 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 
 	base = Info$base[,select.ct]
 	bulk = Info$bulk
-	data_cellType = Info$data_cellType
+	data_cellLabel = Info$data_cellLabel
 	cellSize = Info$cellSize
-	type_n = length(data_cellType)
+	type_n = length(data_cellLabel)
 
 
 	#Preparing for the random components
 	rancmp = sapply(seq(1,type_n), function(i){
-				Z_new = data_cellType
+				Z_new = data_cellLabel
 				Z_new[i] = NULL
 				Rest =  matrix(unlist(Z_new),nrow = length(gene))
 				cellName = unlist(lapply(Z_new,colnames))
