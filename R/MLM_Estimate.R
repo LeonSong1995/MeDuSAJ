@@ -64,8 +64,8 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 		select.ct = unique(sce$cellLabel)
 	}
 
-	MetaData = GetAssayData(sce, assay = "RNA", slot = "counts")
-	exprsData = as.matrix(sce@assays$RNA@counts)
+	MetaData = sce@meta.data
+	exprsData = as.matrix(GetAssayData(sce, assay = "RNA", slot = "counts"))
 	bulk = bulk[rowSums(bulk)>0,]
 
 	#finding signature gene
