@@ -64,7 +64,7 @@ CTdcv = function(bulk,sce,gene=NULL,data_type, select.ct = NULL, RanSplit=NULL, 
 		select.ct = unique(sce$cellLabel)
 	}
 
-	MetaData = sce@meta.data
+	MetaData = GetAssayData(sce, assay = "RNA", slot = "counts")
 	exprsData = as.matrix(sce@assays$RNA@counts)
 	bulk = bulk[rowSums(bulk)>0,]
 
